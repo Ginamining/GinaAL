@@ -546,9 +546,17 @@
                     📧 Receberás confirmação por email em <strong>1-24 horas</strong> após recebermos o pagamento.
                 </p>
                 
-                <button onclick="window.print()" style="background: #667eea; color: white; border: none; padding: 10px 20px; border-radius: 8px; margin-top: 15px; cursor: pointer;">
-                    🖨️ Imprimir Detalhes
-                </button>
+                <div style="display: flex; gap: 10px; margin-top: 15px; justify-content: center;">
+                    <button onclick="window.print()" style="background: #667eea; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: 600;">
+                        🖨️ Imprimir Detalhes
+                    </button>
+                    <button onclick="location.reload()" style="background: #28a745; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: 600;">
+                        ← Voltar ao Formulário
+                    </button>
+                    <button onclick="window.location.href='index.html'" style="background: #6c757d; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: 600;">
+                        🏠 Página Inicial
+                    </button>
+                </div>
             `;
 
             // Em produção, enviaria para o backend:
