@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulário de Encomenda - GinaAL</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 0.95em;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .package-selector {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .package-option {
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .package-option:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
+        }
+
+        .package-option.selected {
+            border-color: #667eea;
+            background: linear-gradient(135deg, #667eea15, #764ba215);
+        }
+
+        .package-option input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+        }
+
+        .package-name {
+            font-weight: bold;
+            color: #667eea;
+            font-size: 1.1em;
+            margin-bottom: 5px;
+        }
+
+        .package-price {
+            font-size: 1.5em;
+            color: #333;
+            margin: 10px 0;
+        }
+
+        .package-tokens {
+            font-size: 0.85em;
+            color: #666;
+        }
+
+        .payment-methods {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .payment-option {
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .payment-option:hover {
+            border-color: #667eea;
+        }
+
+        .payment-option.selected {
+            border-color: #667eea;
+            background: linear-gradient(135deg, #667eea15, #764ba215);
+        }
+
+        .payment-option input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+        }
+
+        .payment-name {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .payment-info {
+            font-size: 0.85em;
+            color: #666;
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s;
+            margin-top: 20px;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        .submit-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .info-box {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+
+        .info-box h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        .info-box ul {
+            margin-left: 20px;
+            color: #666;
+        }
+
+        .info-box li {
+            margin-bottom: 5px;
+        }
+
+        .order-summary {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 30px;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .summary-row:last-child {
+            border-bottom: none;
+            font-weight: bold;
+            font-size: 1.2em;
+            color: #667eea;
+        }
+
+        .error-message {
+            background: #fee;
+            color: #c00;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .success-message {
+            background: #efe;
+            color: #060;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            display: none;
+        }
+
+        .success-message h2 {
+            color: #060;
+            margin-bottom: 15px;
+        }
+
+        .order-details {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+            border: 2px solid #060;
+        }
+
+        .order-details strong {
+            color: #060;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>💎 Encomendar GinaAL</h1>
+        <p class="subtitle">Preenche o formulário para criar a tua encomenda</p>
+
+        <div class="error-message" id="errorMessage"></div>
+        
+        <form id="orderForm">
+            <!-- Seleção de Pacote -->
+            <div class="form-group">
+                <label>Escolhe o teu pacote:</label>
+                <div class="package-selector">
+                    <div class="package-option" onclick="selectPackage('MINI')">
+                        <input type="radio" name="package" value="MINI" required>
+                        <div class="package-name">MINI</div>
+                        <div class="package-price">€5</div>
+                        <div class="package-tokens">5,000 GinaAL</div>
+                    </div>
+                    <div class="package-option" onclick="selectPackage('STARTER')">
+                        <input type="radio" name="package" value="STARTER" required>
+                        <div class="package-name">STARTER</div>
+                        <div class="package-price">€10</div>
+                        <div class="package-tokens">10,000 GinaAL</div>
+                    </div>
+                    <div class="package-option" onclick="selectPackage('BRONZE')">
+                        <input type="radio" name="package" value="BRONZE" required>
+                        <div class="package-name">BRONZE</div>
+                        <div class="package-price">€20</div>
+                        <div class="package-tokens">22,000 GinaAL</div>
+                    </div>
+                    <div class="package-option" onclick="selectPackage('SILVER')">
+                        <input type="radio" name="package" value="SILVER" required>
+                        <div class="package-name">SILVER</div>
+                        <div class="package-price">€50</div>
+                        <div class="package-tokens">55,000 GinaAL</div>
+                    </div>
+                    <div class="package-option" onclick="selectPackage('GOLD')">
+                        <input type="radio" name="package" value="GOLD" required>
+                        <div class="package-name">GOLD</div>
+                        <div class="package-price">€100</div>
+                        <div class="package-tokens">130,000 GinaAL</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Email -->
+            <div class="form-group">
+                <label for="email">📧 Email de contacto:</label>
+                <input type="email" id="email" name="email" placeholder="teu@email.com" required>
+            </div>
+
+            <!-- Endereço da Wallet -->
+            <div class="form-group">
+                <label for="address">📍 Endereço da tua wallet GinaAL:</label>
+                <input type="text" id="address" name="address" placeholder="abc123...xyz" required pattern="[a-f0-9]{64}">
+                <small style="color: #666; margin-top: 5px; display: block;">
+                    Se ainda não tens wallet, executa: <code>python ginaal_cli.py status</code>
+                </small>
+            </div>
+
+            <!-- Método de Pagamento -->
+            <div class="form-group">
+                <label>💳 Método de pagamento:</label>
+                <div class="payment-methods">
+                    <div class="payment-option" onclick="selectPayment('mbway')">
+                        <input type="radio" name="payment_method" value="mbway" required>
+                        <div class="payment-name">📱 MBWay</div>
+                        <div class="payment-info">Instantâneo</div>
+                    </div>
+                    <div class="payment-option" onclick="selectPayment('paypal')">
+                        <input type="radio" name="payment_method" value="paypal" required>
+                        <div class="payment-name">💙 PayPal</div>
+                        <div class="payment-info">1-3 horas</div>
+                    </div>
+                    <div class="payment-option" onclick="selectPayment('sepa')">
+                        <input type="radio" name="payment_method" value="sepa" required>
+                        <div class="payment-name">🏦 Transferência</div>
+                        <div class="payment-info">1-2 dias</div>
+                    </div>
+                    <div class="payment-option" onclick="selectPayment('btc')">
+                        <input type="radio" name="payment_method" value="btc" required>
+                        <div class="payment-name">₿ Bitcoin</div>
+                        <div class="payment-info">~30 min</div>
+                    </div>
+                    <div class="payment-option" onclick="selectPayment('eth')">
+                        <input type="radio" name="payment_method" value="eth" required>
+                        <div class="payment-name">Ξ Ethereum</div>
+                        <div class="payment-info">~5 min</div>
+                    </div>
+                    <div class="payment-option" onclick="selectPayment('usdt')">
+                        <input type="radio" name="payment_method" value="usdt" required>
+                        <div class="payment-name">₮ USDT</div>
+                        <div class="payment-info">Stablecoin</div>
+                    </div>
+                    <div class="payment-option" onclick="selectPayment('usdc')">
+                        <input type="radio" name="payment_method" value="usdc" required>
+                        <div class="payment-name">💵 USDC</div>
+                        <div class="payment-info">Stablecoin</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="info-box">
+                <h3>ℹ️ O que vais receber:</h3>
+                <ul>
+                    <li>✅ Tokens GinaAL (base + bónus)</li>
+                    <li>🔐 Chave de licença para minerar</li>
+                    <li>📧 Confirmação por email (1-24h)</li>
+                    <li>💎 Acesso a mineração ilimitada</li>
+                </ul>
+            </div>
+
+            <button type="submit" class="submit-btn">Criar Encomenda →</button>
+        </form>
+
+        <div class="success-message" id="successMessage">
+            <h2>✅ Encomenda Criada!</h2>
+            <div class="order-details" id="orderDetails"></div>
+        </div>
+    </div>
+
+    <script>
+        const packages = {
+            MINI: { price: 5, tokens: 5000 },
+            STARTER: { price: 10, tokens: 10000 },
+            BRONZE: { price: 20, tokens: 22000 },
+            SILVER: { price: 50, tokens: 55000 },
+            GOLD: { price: 100, tokens: 130000 }
+        };
+
+        function selectPackage(pkg) {
+            document.querySelectorAll('.package-option').forEach(el => {
+                el.classList.remove('selected');
+            });
+            event.currentTarget.classList.add('selected');
+            document.querySelector(`input[value="${pkg}"]`).checked = true;
+        }
+
+        function selectPayment(method) {
+            document.querySelectorAll('.payment-option').forEach(el => {
+                el.classList.remove('selected');
+            });
+            event.currentTarget.classList.add('selected');
+            document.querySelector(`input[value="${method}"]`).checked = true;
+        }
+
+        document.getElementById('orderForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            const data = {
+                package: formData.get('package'),
+                email: formData.get('email'),
+                address: formData.get('address'),
+                payment_method: formData.get('payment_method')
+            };
+
+            // Validação
+            if (!data.package || !data.email || !data.address || !data.payment_method) {
+                showError('Preenche todos os campos!');
+                return;
+            }
+
+            // Gerar Order ID (simulação - em produção vem do backend)
+            const orderId = generateOrderId();
+            const licenseKey = generateLicenseKey();
+            const pkg = packages[data.package];
+
+            // Mostrar sucesso
+            document.getElementById('orderForm').style.display = 'none';
+            document.getElementById('successMessage').style.display = 'block';
+            
+            const paymentInstructions = getPaymentInstructions(data.payment_method, pkg.price, orderId);
+            
+            document.getElementById('orderDetails').innerHTML = `
+                <h3>📦 Order ID: <strong>${orderId}</strong></h3>
+                <p><strong>Package:</strong> ${data.package} (€${pkg.price})</p>
+                <p><strong>Tokens:</strong> ${pkg.tokens.toLocaleString()} GinaAL</p>
+                <p><strong>Email:</strong> ${data.email}</p>
+                <p><strong>Wallet:</strong> ${data.address.substring(0, 10)}...${data.address.substring(data.address.length - 6)}</p>
+                
+                <h3 style="margin-top: 20px; color: #667eea;">💳 Instruções de Pagamento:</h3>
+                <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-top: 10px;">
+                    ${paymentInstructions}
+                </div>
+                
+                <h3 style="margin-top: 20px; color: #667eea;">🔐 Tua License Key:</h3>
+                <div style="background: #fffacd; padding: 15px; border-radius: 8px; margin-top: 10px; font-family: monospace; font-size: 1.2em; text-align: center;">
+                    <strong>${licenseKey}</strong>
+                </div>
+                <p style="margin-top: 10px; color: #c00; font-size: 0.9em;">
+                    ⚠️ GUARDA esta chave! Vais precisar dela para ativar a mineração após confirmação do pagamento.
+                </p>
+                
+                <p style="margin-top: 20px; color: #666;">
+                    📧 Receberás confirmação por email em <strong>1-24 horas</strong> após recebermos o pagamento.
+                </p>
+                
+                <button onclick="window.print()" style="background: #667eea; color: white; border: none; padding: 10px 20px; border-radius: 8px; margin-top: 15px; cursor: pointer;">
+                    🖨️ Imprimir Detalhes
+                </button>
+            `;
+
+            // Em produção, enviaria para o backend:
+            // await fetch('/api/orders', { method: 'POST', body: JSON.stringify(data) });
+            console.log('Encomenda criada:', data, 'Order ID:', orderId);
+        });
+
+        function generateOrderId() {
+            const timestamp = new Date().toISOString().replace(/[-:]/g, '').replace('T', '').split('.')[0];
+            const random = Math.random().toString(36).substring(2, 10).toUpperCase();
+            return `GINA-${timestamp}-${random}`;
+        }
+
+        function generateLicenseKey() {
+            const chars = '0123456789ABCDEF';
+            const parts = [];
+            for (let i = 0; i < 4; i++) {
+                let part = '';
+                for (let j = 0; j < 4; j++) {
+                    part += chars[Math.floor(Math.random() * chars.length)];
+                }
+                parts.push(part);
+            }
+            return parts.join('-');
+        }
+
+        function getPaymentInstructions(method, price, orderId) {
+            const instructions = {
+                mbway: `
+                    <p><strong>📱 Número MBWay:</strong> +351 910 000 000</p>
+                    <p><strong>💰 Valor:</strong> €${price}</p>
+                    <p><strong>📝 Nota:</strong> ${orderId}</p>
+                    <p style="margin-top: 10px;">1. Abre a app MBWay<br>2. Envia €${price} para +351 910 000 000<br>3. Inclui "${orderId}" na referência</p>
+                `,
+                btc: `
+                    <p><strong>₿ Endereço Bitcoin:</strong> bc1q...</p>
+                    <p><strong>💰 Valor:</strong> €${price} (verificar cotação atual)</p>
+                    <p><strong>📝 Order ID:</strong> ${orderId}</p>
+                    <p style="margin-top: 10px;">1. Verifica a cotação BTC/EUR atual<br>2. Envia o equivalente a €${price} para bc1q...<br>3. Envia-nos o TX hash por email<br>4. Aguarda 3 confirmações (~30 min)</p>
+                    <p style="color: #c00; font-size: 0.9em;">⚠️ Usa taxa de transação "Normal" ou "Alta" para confirmação rápida</p>
+                `,
+                eth: `
+                    <p><strong>Ξ Endereço Ethereum:</strong> 0x...</p>
+                    <p><strong>💰 Valor:</strong> €${price} (verificar cotação atual)</p>
+                    <p><strong>📝 Order ID:</strong> ${orderId}</p>
+                    <p style="margin-top: 10px;">1. Verifica a cotação ETH/EUR atual<br>2. Envia o equivalente a €${price} para 0x...<br>3. Envia-nos o TX hash por email<br>4. Aguarda 12 confirmações (~5 min)</p>
+                    <p style="color: #c00; font-size: 0.9em;">⚠️ Verifica o Gas Fee antes de enviar</p>
+                `,
+                usdt: `
+                    <p><strong>₮ Endereço USDT (ERC-20):</strong> 0x...</p>
+                    <p><strong>💰 Valor:</strong> €${price} USDT (1:1 com USD)</p>
+                    <p><strong>⚠️ Network:</strong> ERC-20 (Ethereum)</p>
+                    <p><strong>📝 Order ID:</strong> ${orderId}</p>
+                    <p style="margin-top: 10px;">1. Envia €${price} USDT na rede ERC-20<br>2. Envia-nos o TX hash por email<br>3. Confirmação em ~5 minutos</p>
+                    <p style="color: #c00; font-size: 0.9em;">⚠️ ATENÇÃO: Usa apenas ERC-20! Outras redes (TRC-20, BEP-20) resultarão em perda de fundos!</p>
+                `,
+                usdc: `
+                    <p><strong>💵 Endereço USDC (ERC-20):</strong> 0x...</p>
+                    <p><strong>💰 Valor:</strong> €${price} USDC (1:1 com USD)</p>
+                    <p><strong>⚠️ Network:</strong> ERC-20 (Ethereum)</p>
+                    <p><strong>📝 Order ID:</strong> ${orderId}</p>
+                    <p style="margin-top: 10px;">1. Na Binance: Withdraw → USDC → ERC-20<br>2. Envia €${price} USDC para 0x...<br>3. Envia-nos o TX hash por email<br>4. Confirmação em ~5 minutos</p>
+                    <p style="color: #060; font-size: 0.9em;">✅ Popular na Binance! Sem volatilidade, taxas baixas.</p>
+                `,
+                paypal: `
+                    <p><strong>📧 Email PayPal:</strong> payments@ginamining.com</p>
+                    <p><strong>💰 Valor:</strong> €${price}</p>
+                    <p><strong>⚠️ Tipo:</strong> Friends & Family</p>
+                    <p><strong>📝 Nota:</strong> ${orderId}</p>
+                    <p style="margin-top: 10px;">1. Entra no PayPal<br>2. Envia para payments@ginamining.com<br>3. Escolhe "Friends & Family"<br>4. Adiciona "${orderId}" na descrição</p>
+                `,
+                sepa: `
+                    <p><strong>🏦 IBAN:</strong> PT50 0000 0000 0000 0000 0000 0</p>
+                    <p><strong>💰 Valor:</strong> €${price}</p>
+                    <p><strong>🏛️ BIC:</strong> BPIIPTPL</p>
+                    <p><strong>👤 Titular:</strong> Ginamining</p>
+                    <p><strong>📝 Descrição:</strong> ${orderId}</p>
+                    <p style="margin-top: 10px;">Transfere para o IBAN acima com a descrição "${orderId}"</p>
+                `
+            };
+            return instructions[method] || '';
+        }
+
+        function showError(message) {
+            const errorEl = document.getElementById('errorMessage');
+            errorEl.textContent = message;
+            errorEl.style.display = 'block';
+            setTimeout(() => {
+                errorEl.style.display = 'none';
+            }, 5000);
+        }
+    </script>
+</body>
+</html>

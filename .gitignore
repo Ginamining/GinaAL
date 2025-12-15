@@ -1,0 +1,31 @@
+# Dados Sensíveis - NUNCA enviar para GitHub!
+orders.json
+wallet.json
+blockchain.json
+*.key
+*.pem
+
+# Dados de clientes
+C:\Users\*\.ginaal\
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
