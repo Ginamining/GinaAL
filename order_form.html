@@ -413,22 +413,69 @@
             GOLD: { price: 100, tokens: 130000 }
         };
 
-        // Função para criar carteira GinaAL
+        // Lista BIP39 simplificada de palavras em português
+        const palavrasBIP39 = [
+            'abacate', 'amigo', 'amor', 'animal', 'arroz', 'azul', 'bola', 'cafe', 'carro', 'casa',
+            'cavalo', 'ceu', 'cidade', 'cor', 'dia', 'dinheiro', 'estrela', 'familia', 'feliz', 'flor',
+            'fruta', 'gato', 'grande', 'guitarra', 'hora', 'igreja', 'jardim', 'janela', 'jogar', 'lago',
+            'laranja', 'livro', 'lua', 'luz', 'mae', 'mar', 'mesa', 'musica', 'neve', 'noite',
+            'nuvem', 'olho', 'ouro', 'pai', 'pao', 'passaro', 'peixe', 'pequeno', 'planta', 'ponte',
+            'porta', 'praia', 'quadro', 'quente', 'rapido', 'rei', 'rio', 'rocha', 'rosa', 'rua',
+            'sal', 'sangue', 'semente', 'sol', 'sonho', 'tarde', 'terra', 'tigre', 'trigo', 'uva',
+            'vento', 'verde', 'vidro', 'vinho', 'violino', 'viagem', 'agua', 'arvore', 'asa', 'aviao'
+        ];
+
+        // Função para criar carteira GinaAL com seed phrase
         function createWallet() {
-            // Gerar endereço aleatório (SHA-1 style - 40 caracteres hex)
-            const chars = '0123456789abcdef';
+            // Gerar 12 palavras aleatórias (seed phrase)
+            let seedPhrase = [];
+            for (let i = 0; i < 12; i++) {
+                const randomIndex = Math.floor(Math.random() * palavrasBIP39.length);
+                seedPhrase.push(palavrasBIP39[randomIndex]);
+            }
+            const seedString = seedPhrase.join(' ');
+            
+            // Gerar endereço a partir da seed (hash simples)
             let address = '';
+            const chars = '0123456789abcdef';
+            const seedHash = seedString.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+            
+            // Usar seed como base para gerar endereço determinístico
+            let seed = seedHash;
             for (let i = 0; i < 40; i++) {
-                address += chars[Math.floor(Math.random() * chars.length)];
+                seed = (seed * 1103515245 + 12345) & 0x7fffffff; // Linear congruential generator
+                address += chars[seed % 16];
             }
             
             document.getElementById('address').value = address;
             
-            // Mostrar alerta
-            alert('✅ Carteira criada!\n\n📍 Endereço: ' + address + '\n\n⚠️ IMPORTANTE: Copia e guarda este endereço! É onde vais receber os teus tokens GinaAL.');
+            // Mostrar seed phrase em modal/alerta
+            const mensagem = `✅ Carteira GinaAL Criada!\n\n` +
+                `🔐 PALAVRAS DE SEGURANÇA (Seed Phrase):\n` +
+                `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n` +
+                `${seedPhrase.map((p, i) => `${i+1}. ${p}`).join('\n')}\n` +
+                `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n` +
+                `📍 Endereço: ${address}\n\n` +
+                `⚠️ CRÍTICO - GUARDA ESTAS 12 PALAVRAS!\n` +
+                `• Escreve num papel e guarda em segurança\n` +
+                `• NUNCA partilhes com ninguém\n` +
+                `• Precisas destas palavras para recuperar a carteira\n` +
+                `• Se perderes, PERDES os tokens!`;
+            
+            alert(mensagem);
+            
+            // Copiar seed para clipboard (se disponível)
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(seedString).then(() => {
+                    console.log('✅ Seed phrase copiada para clipboard');
+                });
+            }
             
             // Scroll suave para o método de pagamento
-            document.querySelector('.payment-methods').scrollIntoView({ behavior: 'smooth', block: 'center' });
+            const paymentMethods = document.querySelector('.payment-methods');
+            if (paymentMethods) {
+                paymentMethods.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
         }
 
         function selectPackage(pkg) {
