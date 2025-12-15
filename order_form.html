@@ -40,7 +40,7 @@
         }
 
         .form-group {
-            margin-bottom: 25px;
+            margin-bottom: 20px;
         }
 
         label {
@@ -69,15 +69,15 @@
 
         .package-selector {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-            gap: 15px;
-            margin-bottom: 30px;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 10px;
+            margin-bottom: 20px;
         }
 
         .package-option {
             border: 2px solid #e0e0e0;
             border-radius: 10px;
-            padding: 20px;
+            padding: 15px 10px;
             text-align: center;
             cursor: pointer;
             transition: all 0.3s;
@@ -158,22 +158,30 @@
         }
 
         .submit-btn {
-            background: linear-gradient(135deg, #667eea, #764ba2);
+            background: linear-gradient(135deg, #28a745, #20c997);
             color: white;
             border: none;
-            padding: 15px 40px;
+            padding: 20px 40px;
             border-radius: 10px;
-            font-size: 1.1em;
+            font-size: 1.3em;
             font-weight: bold;
             cursor: pointer;
             width: 100%;
             transition: all 0.3s;
-            margin-top: 20px;
+            margin-top: 30px;
+            box-shadow: 0 8px 20px rgba(40, 167, 69, 0.3);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
         }
 
         .submit-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+            transform: translateY(-2px) scale(1.03);
+            box-shadow: 0 12px 35px rgba(40, 167, 69, 0.5);
+            animation: none;
         }
 
         .submit-btn:disabled {
@@ -265,7 +273,11 @@
 </head>
 <body>
     <div class="container">
-        <h1>💎 Encomendar GinaAL</h1>
+        <div style="display: flex; align-items: center; gap: 20px; margin-bottom: 20px; justify-content: center;">
+            <img src="ginamining-logo.png" alt="GinaMining" style="width: 60px; height: 60px; object-fit: contain;">
+            <h1 style="margin: 0;">💎 Encomendar GinaAL</h1>
+            <img src="ginaAL logo.png" alt="GinaAL" style="width: 60px; height: 60px; object-fit: contain;">
+        </div>
         <p class="subtitle">Preenche o formulário para criar a tua encomenda</p>
 
         <div class="error-message" id="errorMessage"></div>
@@ -317,9 +329,14 @@
             <!-- Endereço da Wallet -->
             <div class="form-group">
                 <label for="address">📍 Endereço da tua wallet GinaAL:</label>
-                <input type="text" id="address" name="address" placeholder="abc123...xyz" required pattern="[a-f0-9]{64}">
+                <div style="display: flex; gap: 10px; align-items: center;">
+                    <input type="text" id="address" name="address" placeholder="Clica em 'Criar Carteira' ou cola o teu endereço" required pattern="[a-f0-9]{40}" style="flex: 1;">
+                    <button type="button" onclick="createWallet()" style="background: #28a745; color: white; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; font-weight: 600; white-space: nowrap;">
+                        🆕 Criar Carteira
+                    </button>
+                </div>
                 <small style="color: #666; margin-top: 5px; display: block;">
-                    Se ainda não tens wallet, executa: <code>python ginaal_cli.py status</code>
+                    ⚠️ <strong>GUARDA BEM</strong> o endereço da carteira! Vais precisar dele para receber os tokens.
                 </small>
             </div>
 
@@ -395,6 +412,24 @@
             SILVER: { price: 50, tokens: 55000 },
             GOLD: { price: 100, tokens: 130000 }
         };
+
+        // Função para criar carteira GinaAL
+        function createWallet() {
+            // Gerar endereço aleatório (SHA-1 style - 40 caracteres hex)
+            const chars = '0123456789abcdef';
+            let address = '';
+            for (let i = 0; i < 40; i++) {
+                address += chars[Math.floor(Math.random() * chars.length)];
+            }
+            
+            document.getElementById('address').value = address;
+            
+            // Mostrar alerta
+            alert('✅ Carteira criada!\n\n📍 Endereço: ' + address + '\n\n⚠️ IMPORTANTE: Copia e guarda este endereço! É onde vais receber os teus tokens GinaAL.');
+            
+            // Scroll suave para o método de pagamento
+            document.querySelector('.payment-methods').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
 
         function selectPackage(pkg) {
             document.querySelectorAll('.package-option').forEach(el => {
